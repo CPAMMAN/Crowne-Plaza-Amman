@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CP Issues">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192x192.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#8B1A4A">
+<title>CP Amman — Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cp:#8B1A4A; --cp-dark:#6B1238; --cp-light:#B8427A; --cp-pale:rgba(139,26,74,0.08);
+  --black:#0f0f0f; --white:#ffffff; --off:#f6f4f7; --surface:#ffffff;
+  --surface2:#f0edf2; --border:#e5dfe8; --text:#1a1a1a; --muted:#6b6b7b;
+  --green:#16a34a; --green-bg:rgba(22,163,74,0.08);
+  --orange:#d97706; --orange-bg:rgba(217,119,6,0.08);
+  --red:#dc2626; --red-bg:rgba(220,38,38,0.08);
+  --blue:#2563eb; --blue-bg:rgba(37,99,235,0.08);
+  --yellow:#ca8a04; --yellow-bg:rgba(202,138,4,0.08);
+  --radius:14px; --shadow:0 2px 8px rgba(0,0,0,0.06),0 0 1px rgba(0,0,0,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--off);font-family:'Inter',sans-serif;color:var(--text);min-height:100vh;}
+body.rtl{direction:rtl;}
+
+/* ── HEADER ── */
+.header{
+  background:var(--cp);color:var(--white);
+  padding:0 24px;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 12px rgba(139,26,74,0.3);
+}
+.header-left{display:flex;align-items:center;gap:14px;}
+.cp-logo-small{height:28px;filter:brightness(0) invert(1);opacity:0.9;}
+.header-title{font-size:15px;font-weight:600;letter-spacing:0.2px;}
+.header-subtitle{font-size:11px;opacity:0.65;letter-spacing:0.5px;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.hbtn{
+  padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;
+  border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.12);
+  color:var(--white);
+}
+.hbtn:hover{background:rgba(255,255,255,0.22);}
+.hbtn.primary{background:var(--white);color:var(--cp);border-color:var(--white);}
+.hbtn.primary:hover{background:#f0e8ec;}
+.lang-toggle-header{display:flex;gap:4px;}
+.lang-h-btn{padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.6);font-family:'Inter',sans-serif;transition:all 0.2s;}
+.lang-h-btn.active{background:rgba(255,255,255,0.2);color:var(--white);}
+
+/* ── STATS BAR ── */
+.stats-bar{display:flex;gap:12px;padding:20px 24px 0;overflow-x:auto;scrollbar-width:none;}
+.stats-bar::-webkit-scrollbar{display:none;}
+.stat-card{
+  background:var(--white);border-radius:var(--radius);
+  padding:16px 20px;min-width:130px;flex-shrink:0;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+}
+.stat-num{font-size:30px;font-weight:700;font-family:'Playfair Display',serif;color:var(--text);}
+.stat-num.cp{color:var(--cp);}
+.stat-num.orange{color:var(--orange);}
+.stat-num.green{color:var(--green);}
+.stat-num.red{color:var(--red);}
+.stat-label{font-size:11px;color:var(--muted);margin-top:3px;font-weight:500;}
+
+/* ── TOOLBAR ── */
+.toolbar{
+  display:flex;gap:10px;padding:16px 24px;
+  align-items:center;flex-wrap:wrap;
+}
+.search-wrap{flex:1;min-width:200px;position:relative;}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;opacity:0.4;}
+.search-input{
+  width:100%;background:var(--white);border:1.5px solid var(--border);
+  border-radius:10px;padding:10px 14px 10px 36px;font-size:14px;
+  font-family:'Inter',sans-serif;color:var(--text);outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.search-input:focus{border-color:var(--cp);box-shadow:0 0 0 3px var(--cp-pale);}
+.filter-select{
+  background:var(--white);border:1.5px solid var(--border);border-radius:10px;
+  padding:9px 12px;font-size:13px;font-family:'Inter',sans-serif;
+  color:var(--text);outline:none;cursor:pointer;min-width:130px;
+  transition:border-color 0.2s;
+}
+.filter-select:focus{border-color:var(--cp);}
+.add-btn{
+  padding:10px 18px;background:var(--cp);color:var(--white);
+  border:none;border-radius:10px;font-family:'Inter',sans-serif;
+  font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;
+  white-space:nowrap;display:flex;align-items:center;gap:6px;
+}
+.add-btn:hover{background:var(--cp-dark);box-shadow:0 4px 16px rgba(139,26,74,0.3);}
+
+/* ── ISSUES GRID ── */
+.issues-container{padding:0 24px 24px;}
+.issues-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;}
+
+/* ── ISSUE CARD ── */
+.issue-card{
+  background:var(--white);border-radius:var(--radius);
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;
+}
+.issue-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.1);}
+
+/* Status stripe */
+.issue-card::before{content:'';display:block;height:4px;}
+.issue-card.open::before{background:var(--red);}
+.issue-card.in-progress::before{background:var(--orange);}
+.issue-card.resolved::before{background:var(--green);}
+.issue-card.not-fixable::before{background:var(--muted);}
+
+/* Photo thumbnail */
+.issue-thumb{
+  position:relative;width:100%;height:190px;
+  background:var(--surface2);overflow:hidden;cursor:pointer;
+}
+.issue-thumb img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform 0.3s;display:block;
+}
+.issue-card:hover .issue-thumb img{transform:scale(1.03);}
+.thumb-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,0.55) 100%);
+}
+.thumb-stamp{
+  position:absolute;bottom:10px;left:12px;right:12px;
+  display:flex;flex-direction:column;gap:3px;
+}
+.stamp-location{
+  font-size:12px;font-weight:600;color:var(--white);
+  background:rgba(139,26,74,0.85);
+  padding:3px 8px;border-radius:6px;
+  display:inline-flex;align-items:center;gap:5px;
+  backdrop-filter:blur(4px);width:fit-content;
+}
+.stamp-date{
+  font-size:10px;font-weight:500;color:rgba(255,255,255,0.85);
+  background:rgba(0,0,0,0.4);
+  padding:2px 7px;border-radius:5px;backdrop-filter:blur(4px);
+  width:fit-content;
+}
+.no-photo{
+  width:100%;height:190px;background:var(--surface2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;color:var(--muted);font-size:13px;
+}
+.no-photo-icon{font-size:36px;opacity:0.3;}
+.download-btn{
+  position:absolute;top:10px;right:10px;
+  background:rgba(255,255,255,0.9);color:var(--text);
+  border:none;border-radius:8px;padding:6px 10px;
+  font-size:12px;font-weight:600;cursor:pointer;
+  backdrop-filter:blur(4px);transition:all 0.2s;
+  display:flex;align-items:center;gap:4px;
+  font-family:'Inter',sans-serif;
+}
+.download-btn:hover{background:var(--white);box-shadow:0 2px 8px rgba(0,0,0,0.15);}
+
+/* Card body */
+.issue-body{padding:14px 16px 16px;}
+.issue-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:10px;}
+.issue-title{font-size:14px;font-weight:600;color:var(--text);line-height:1.4;flex:1;}
+.status-badge{
+  font-size:10px;font-weight:700;padding:3px 8px;border-radius:100px;
+  white-space:nowrap;flex-shrink:0;letter-spacing:0.3px;
+  text-transform:uppercase;
+}
+.badge-open{background:var(--red-bg);color:var(--red);}
+.badge-in-progress{background:var(--orange-bg);color:var(--orange);}
+.badge-resolved{background:var(--green-bg);color:var(--green);}
+.badge-not-fixable{background:#f3f3f5;color:var(--muted);}
+
+.issue-meta{display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
+.meta-item{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.meta-icon{font-size:12px;}
+
+.issue-comment{
+  font-size:12px;color:var(--muted);line-height:1.5;
+  margin-bottom:12px;padding:8px 10px;
+  background:var(--off);border-radius:8px;border-left:3px solid var(--border);
+}
+body.rtl .issue-comment{border-left:none;border-right:3px solid var(--border);}
+
+/* ETA badge */
+.eta-badge{
+  font-size:11px;font-weight:500;color:var(--orange);
+  background:var(--orange-bg);padding:4px 10px;border-radius:6px;
+  display:inline-flex;align-items:center;gap:5px;margin-bottom:10px;
+}
+
+/* Resolution photo */
+.resolution-photo{
+  margin-bottom:10px;border-radius:8px;overflow:hidden;
+  border:1px solid var(--border);
+}
+.resolution-photo img{width:100%;height:100px;object-fit:cover;display:block;}
+.resolution-note{
+  font-size:11px;color:var(--green);padding:5px 8px;
+  background:var(--green-bg);border-radius:0 0 8px 8px;
+  font-weight:500;
+}
+
+/* Card actions */
+.card-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.card-btn{
+  flex:1;min-width:70px;padding:7px 8px;border-radius:8px;
+  font-size:11px;font-weight:600;cursor:pointer;border:none;
+  transition:all 0.2s;font-family:'Inter',sans-serif;text-align:center;
+}
+.btn-edit{background:var(--cp-pale);color:var(--cp);}
+.btn-edit:hover{background:rgba(139,26,74,0.15);}
+.btn-delete{background:var(--red-bg);color:var(--red);}
+.btn-delete:hover{background:rgba(220,38,38,0.15);}
+.btn-status{background:var(--surface2);color:var(--text);}
+.btn-status:hover{background:var(--border);}
+
+/* ── EMPTY STATE ── */
+.empty-state{
+  grid-column:1/-1;text-align:center;padding:80px 20px;
+  color:var(--muted);
+}
+.empty-icon{font-size:56px;margin-bottom:16px;opacity:0.4;}
+.empty-title{font-size:18px;font-weight:600;color:var(--text);margin-bottom:8px;}
+.empty-sub{font-size:14px;}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.5);
+  backdrop-filter:blur(6px);z-index:500;
+  display:none;align-items:center;justify-content:center;padding:16px;
+}
+.modal-overlay.show{display:flex;}
+.modal{
+  background:var(--white);border-radius:20px;
+  width:100%;max-width:580px;max-height:90vh;
+  overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);
+}
+.modal-header{
+  padding:22px 24px 18px;
+  border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;background:var(--white);z-index:2;
+}
+.modal-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);padding:4px;line-height:1;}
+.modal-close:hover{color:var(--text);}
+.modal-body{padding:20px 24px 24px;}
+
+/* Modal form */
+.mfield{margin-bottom:16px;}
+.mfield label{
+  display:block;font-size:11px;font-weight:600;letter-spacing:0.8px;
+  text-transform:uppercase;color:var(--cp);margin-bottom:6px;
+}
+.mfield input,.mfield select,.mfield textarea{
+  width:100%;background:var(--off);border:1.5px solid var(--border);
+  border-radius:10px;padding:11px 14px;font-size:14px;
+  font-family:'Inter',sans-serif;color:var(--text);outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.mfield textarea{resize:vertical;min-height:80px;line-height:1.5;}
+.mfield input:focus,.mfield select:focus,.mfield textarea:focus{
+  border-color:var(--cp);box-shadow:0 0 0 3px var(--cp-pale);
+}
+.mfield-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.optional-tag{font-size:10px;color:var(--muted);font-weight:400;margin-left:4px;text-transform:none;letter-spacing:0;}
+
+/* Photo upload */
+.photo-upload-area{
+  border:2px dashed var(--border);border-radius:12px;
+  padding:24px;text-align:center;cursor:pointer;
+  transition:all 0.2s;background:var(--off);
+  position:relative;
+}
+.photo-upload-area:hover{border-color:var(--cp);background:var(--cp-pale);}
+.photo-upload-area.has-photo{border-style:solid;border-color:var(--cp);}
+.upload-icon{font-size:32px;margin-bottom:8px;opacity:0.5;}
+.upload-text{font-size:13px;color:var(--muted);}
+.upload-preview{
+  width:100%;max-height:200px;object-fit:cover;
+  border-radius:8px;display:none;margin-top:10px;
+}
+.photo-upload-area input[type=file]{
+  position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;
+}
+
+/* Dept checkboxes */
+.dept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;}
+.dept-check{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;border-radius:8px;border:1.5px solid var(--border);
+  cursor:pointer;transition:all 0.2s;font-size:13px;font-weight:500;
+}
+.dept-check:hover{border-color:var(--cp);background:var(--cp-pale);}
+.dept-check input{accent-color:var(--cp);}
+.dept-check.checked{border-color:var(--cp);background:var(--cp-pale);color:var(--cp);}
+
+/* Save btn */
+.modal-save-btn{
+  width:100%;padding:14px;background:var(--cp);color:var(--white);
+  border:none;border-radius:10px;font-family:'Inter',sans-serif;
+  font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;
+  margin-top:4px;
+}
+.modal-save-btn:hover{background:var(--cp-dark);}
+
+/* Image lightbox */
+.lightbox{
+  position:fixed;inset:0;background:rgba(0,0,0,0.92);
+  z-index:900;display:none;align-items:center;justify-content:center;
+  padding:20px;
+}
+.lightbox.show{display:flex;}
+.lightbox img{max-width:100%;max-height:90vh;border-radius:8px;object-fit:contain;}
+.lightbox-close{
+  position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.15);
+  border:none;border-radius:50%;width:40px;height:40px;
+  color:#fff;font-size:20px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--text);color:var(--white);padding:11px 22px;border-radius:100px;
+  font-size:13px;font-weight:500;transition:transform 0.3s;z-index:999;white-space:nowrap;
+  box-shadow:0 4px 20px rgba(0,0,0,0.25);
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* Priority badge */
+.priority-high{color:var(--red);}
+.priority-medium{color:var(--orange);}
+.priority-low{color:var(--green);}
+
+/* RTL adjustments */
+body.rtl .search-icon{left:auto;right:12px;}
+body.rtl .search-input{padding:10px 36px 10px 14px;}
+body.rtl .issue-comment{border-left:none;border-right:3px solid var(--border);}
+body.rtl .stamp-location,.stamp-date{left:auto;right:12px;}
+body.rtl .download-btn{right:auto;left:10px;}
+
+/* Responsive */
+@media(max-width:600px){
+  .stats-bar{padding:14px 16px 0;}
+  .toolbar,.issues-container{padding-left:16px;padding-right:16px;}
+  .issues-grid{grid-template-columns:1fr;}
+  .mfield-row{grid-template-columns:1fr;}
+  .header{padding:0 16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <img class="cp-logo-small" src="cp_logo.png" alt="CP">
+    <div>
+      <div class="header-title" id="hTitle">Issue Tracker — Management</div>
+      <div class="header-subtitle" id="hSub">Crowne Plaza Amman</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-toggle-header">
+      <button class="lang-h-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-h-btn" onclick="setLang('ar')">ع</button>
+    </div>
+    <button class="hbtn primary" id="addIssueBtn" onclick="openAddModal()">+ Add Issue</button>
+    <button class="hbtn" onclick="doLogout()" id="logoutBtn">Logout</button>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar" id="statsBar">
+  <div class="stat-card"><div class="stat-num cp" id="statTotal">0</div><div class="stat-label" id="slTotal">Total Issues</div></div>
+  <div class="stat-card"><div class="stat-num red" id="statOpen">0</div><div class="stat-label" id="slOpen">Open</div></div>
+  <div class="stat-card"><div class="stat-num orange" id="statProgress">0</div><div class="stat-label" id="slProgress">In Progress</div></div>
+  <div class="stat-card"><div class="stat-num green" id="statResolved">0</div><div class="stat-label" id="slResolved">Resolved</div></div>
+  <div class="stat-card"><div class="stat-num" id="statNotFixable">0</div><div class="stat-label" id="slNotFixable">Not Fixable</div></div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" id="searchInput" placeholder="Search issues, locations, departments…" oninput="renderIssues()">
+  </div>
+  <select class="filter-select" id="filterStatus" onchange="renderIssues()">
+    <option value="">All Statuses</option>
+    <option value="open">Open</option>
+    <option value="in-progress">In Progress</option>
+    <option value="resolved">Resolved</option>
+    <option value="not-fixable">Not Fixable</option>
+  </select>
+  <select class="filter-select" id="filterDept" onchange="renderIssues()">
+    <option value="">All Departments</option>
+    <option value="Engineering">Engineering</option>
+    <option value="Housekeeping">Housekeeping</option>
+    <option value="Front Office">Front Office</option>
+    <option value="F&B">F&B</option>
+    <option value="Security">Security</option>
+  </select>
+  <select class="filter-select" id="filterPriority" onchange="renderIssues()">
+    <option value="">All Priorities</option>
+    <option value="high">High</option>
+    <option value="medium">Medium</option>
+    <option value="low">Low</option>
+  </select>
+</div>
+
+<!-- ISSUES GRID -->
+<div class="issues-container">
+  <div class="issues-grid" id="issuesGrid">
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <div class="empty-title" id="emptyTitle">No issues yet</div>
+      <div class="empty-sub" id="emptySub">Click "Add Issue" to report the first one</div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="issueModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Report New Issue</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="mfield">
+        <label id="mlTitle">Issue Title</label>
+        <input type="text" id="fTitle" placeholder="e.g. AC not working in Room 302">
+      </div>
+      <div class="mfield-row">
+        <div class="mfield">
+          <label id="mlLocation">Location</label>
+          <input type="text" id="fLocation" placeholder="e.g. Room 302 / Lobby">
+        </div>
+        <div class="mfield">
+          <label id="mlPriority">Priority</label>
+          <select id="fPriority">
+            <option value="high">🔴 High</option>
+            <option value="medium" selected>🟠 Medium</option>
+            <option value="low">🟢 Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="mfield-row">
+        <div class="mfield">
+          <label id="mlEtaFrom">ETA From <span class="optional-tag">(optional)</span></label>
+          <input type="date" id="fEtaFrom">
+        </div>
+        <div class="mfield">
+          <label id="mlEtaTo">ETA To <span class="optional-tag">(optional)</span></label>
+          <input type="date" id="fEtaTo">
+        </div>
+      </div>
+      <div class="mfield">
+        <label id="mlComment">Comment <span class="optional-tag">(optional)</span></label>
+        <textarea id="fComment" placeholder="Describe the issue in detail…"></textarea>
+      </div>
+      <div class="mfield">
+        <label id="mlDepts">Assign to Departments</label>
+        <div class="dept-grid" id="deptGrid">
+          <label class="dept-check"><input type="checkbox" value="Engineering"> Engineering</label>
+          <label class="dept-check"><input type="checkbox" value="Housekeeping"> Housekeeping</label>
+          <label class="dept-check"><input type="checkbox" value="Front Office"> Front Office</label>
+          <label class="dept-check"><input type="checkbox" value="F&B"> F&B</label>
+          <label class="dept-check"><input type="checkbox" value="Security"> Security</label>
+        </div>
+      </div>
+      <div class="mfield">
+        <label id="mlPhoto">Photo <span class="optional-tag">(optional)</span></label>
+        <div class="photo-upload-area" id="photoUploadArea">
+          <input type="file" id="fPhoto" accept="image/*" onchange="handlePhotoSelect(event)">
+          <div class="upload-icon" id="uploadIcon">📷</div>
+          <div class="upload-text" id="uploadText">Tap to upload a photo</div>
+          <img id="uploadPreview" class="upload-preview" src="" alt="">
+        </div>
+      </div>
+      <input type="hidden" id="fEditId">
+      <input type="hidden" id="fExistingPhoto">
+      <button class="modal-save-btn" id="modalSaveBtn" onclick="saveIssue()">Save Issue</button>
+    </div>
+  </div>
+</div>
+
+<!-- STATUS MODAL -->
+<div class="modal-overlay" id="statusModal">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <div class="modal-title" id="smTitle">Update Status</div>
+      <button class="modal-close" onclick="closeStatusModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="mfield">
+        <label id="smLabelStatus">New Status</label>
+        <select id="smStatus">
+          <option value="open">🔴 Open</option>
+          <option value="in-progress">🟠 In Progress</option>
+          <option value="resolved">✅ Resolved</option>
+          <option value="not-fixable">⛔ Not Fixable</option>
+        </select>
+      </div>
+      <div class="mfield-row" id="smEtaRow">
+        <div class="mfield">
+          <label id="smLabelFrom">ETA From</label>
+          <input type="date" id="smEtaFrom">
+        </div>
+        <div class="mfield">
+          <label id="smLabelTo">ETA To</label>
+          <input type="date" id="smEtaTo">
+        </div>
+      </div>
+      <div class="mfield">
+        <label id="smLabelNote">Note <span class="optional-tag">(optional)</span></label>
+        <textarea id="smNote" style="min-height:60px;" placeholder="Add a note…"></textarea>
+      </div>
+      <input type="hidden" id="smIssueId">
+      <button class="modal-save-btn" onclick="saveStatus()">Update Status</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, push, update, remove, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getStorage, ref as sRef, uploadString, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyC0IXfYNIbEjbLiPiY8C2C_JPAd5baTLMo",
+  authDomain:"flowvalet-efd95.firebaseapp.com",
+  databaseURL:"https://flowvalet-efd95-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"flowvalet-efd95",
+  storageBucket:"flowvalet-efd95.appspot.com",
+  messagingSenderId:"394962828421",
+  appId:"1:394962828421:web:7bab162c88f3da9ee13dec"
+};
+
+const app  = initializeApp(firebaseConfig);
+const db   = getDatabase(app);
+const storage = getStorage(app);
+
+window.__db = db;
+window.__push = push;
+window.__update = update;
+window.__remove = remove;
+window.__set = set;
+window.__sRef = sRef;
+window.__uploadString = uploadString;
+window.__getDownloadURL = getDownloadURL;
+window.__deleteObject = deleteObject;
+window.__storage = storage;
+window.__fbReady = true;
+
+// Listen to all issues
+onValue(ref(db,'cpissues/issues'), function(snap){
+  var issues = {};
+  if(snap.exists()) snap.forEach(function(c){ issues[c.key]=c.val(); });
+  window.__issues = issues;
+  renderIssues();
+  updateStats(issues);
+});
+</script>
+
+<script>
+// ── Auth guard ────────────────────────────────────────────────────
+var session = JSON.parse(sessionStorage.getItem('cpUser')||'null');
+if(!session || session.role !== 'management'){
+  window.location.href = 'login.html';
+}
+var currentLang = sessionStorage.getItem('cpLang')||'en';
+
+function doLogout(){
+  sessionStorage.removeItem('cpUser');
+  window.location.href = 'login.html';
+}
+
+// ── i18n ──────────────────────────────────────────────────────────
+var T = {
+  en:{
+    hTitle:'Issue Tracker — Management', hSub:'Crowne Plaza Amman',
+    addBtn:'+ Add Issue', logout:'Logout',
+    slTotal:'Total Issues', slOpen:'Open', slProgress:'In Progress',
+    slResolved:'Resolved', slNotFixable:'Not Fixable',
+    searchPh:'Search issues, locations, departments…',
+    allStatus:'All Statuses', allDept:'All Departments', allPriority:'All Priorities',
+    modalTitleAdd:'Report New Issue', modalTitleEdit:'Edit Issue',
+    mlTitle:'Issue Title', mlLocation:'Location', mlPriority:'Priority',
+    mlEtaFrom:'ETA From', mlEtaTo:'ETA To', mlComment:'Comment',
+    mlDepts:'Assign to Departments', mlPhoto:'Photo',
+    saveBtn:'Save Issue', updateBtn:'Update Issue',
+    smTitle:'Update Status', smLabelStatus:'New Status',
+    smLabelFrom:'ETA From', smLabelTo:'ETA To', smLabelNote:'Note',
+    emptyTitle:'No issues yet', emptySub:'Click "Add Issue" to report the first one',
+    open:'Open', inProgress:'In Progress', resolved:'Resolved', notFixable:'Not Fixable',
+    high:'High', medium:'Medium', low:'Low',
+    priorityLabel:'Priority', deptLabel:'Dept', etaLabel:'ETA',
+    editBtn:'Edit', deleteBtn:'Delete', statusBtn:'Status',
+    downloadBtn:'Download', confirmDelete:'Delete this issue permanently?',
+    toastSaved:'Issue saved', toastUpdated:'Status updated', toastDeleted:'Issue deleted',
+    optional:'optional', noPhoto:'No photo',
+    assignedTo:'Assigned to', reportedBy:'Reported', by:'by',
+    resolutionPhoto:'Resolution photo', deptNote:'Dept note',
+  },
+  ar:{
+    hTitle:'نظام تتبع المشكلات — الإدارة', hSub:'كراون بلازا عمّان',
+    addBtn:'+ إضافة مشكلة', logout:'تسجيل الخروج',
+    slTotal:'إجمالي المشاكل', slOpen:'مفتوحة', slProgress:'قيد المعالجة',
+    slResolved:'تم الحل', slNotFixable:'غير قابلة للإصلاح',
+    searchPh:'ابحث في المشاكل والمواقع والأقسام…',
+    allStatus:'جميع الحالات', allDept:'جميع الأقسام', allPriority:'جميع الأولويات',
+    modalTitleAdd:'الإبلاغ عن مشكلة جديدة', modalTitleEdit:'تعديل المشكلة',
+    mlTitle:'عنوان المشكلة', mlLocation:'الموقع', mlPriority:'الأولوية',
+    mlEtaFrom:'من تاريخ', mlEtaTo:'إلى تاريخ', mlComment:'تعليق',
+    mlDepts:'تعيين إلى الأقسام', mlPhoto:'صورة',
+    saveBtn:'حفظ المشكلة', updateBtn:'تحديث المشكلة',
+    smTitle:'تحديث الحالة', smLabelStatus:'الحالة الجديدة',
+    smLabelFrom:'من تاريخ', smLabelTo:'إلى تاريخ', smLabelNote:'ملاحظة',
+    emptyTitle:'لا توجد مشاكل بعد', emptySub:'اضغط "إضافة مشكلة" للبدء',
+    open:'مفتوحة', inProgress:'قيد المعالجة', resolved:'تم الحل', notFixable:'غير قابلة للإصلاح',
+    high:'عالية', medium:'متوسطة', low:'منخفضة',
+    priorityLabel:'الأولوية', deptLabel:'القسم', etaLabel:'الموعد المتوقع',
+    editBtn:'تعديل', deleteBtn:'حذف', statusBtn:'الحالة',
+    downloadBtn:'تحميل', confirmDelete:'هل تريد حذف هذه المشكلة نهائياً؟',
+    toastSaved:'تم حفظ المشكلة', toastUpdated:'تم تحديث الحالة', toastDeleted:'تم حذف المشكلة',
+    optional:'اختياري', noPhoto:'لا توجد صورة',
+    assignedTo:'معين إلى', reportedBy:'أُبلغ', by:'بواسطة',
+    resolutionPhoto:'صورة الحل', deptNote:'ملاحظة القسم',
+  }
+};
+
+function t(k){ return (T[currentLang]||T.en)[k]||k; }
+
+function setLang(lang){
+  currentLang = lang;
+  sessionStorage.setItem('cpLang',lang);
+  document.body.classList.toggle('rtl', lang==='ar');
+  document.getElementById('htmlRoot').setAttribute('dir', lang==='ar'?'rtl':'ltr');
+  document.querySelectorAll('.lang-h-btn').forEach(function(b){
+    b.classList.toggle('active', (lang==='en'&&b.textContent==='EN')||(lang==='ar'&&b.textContent==='ع'));
+  });
+  applyStrings();
+  renderIssues();
+  if(window.__issues) updateStats(window.__issues);
+}
+
+function applyStrings(){
+  document.getElementById('hTitle').textContent    = t('hTitle');
+  document.getElementById('hSub').textContent      = t('hSub');
+  document.getElementById('addIssueBtn').textContent = t('addBtn');
+  document.getElementById('logoutBtn').textContent  = t('logout');
+  document.getElementById('slTotal').textContent    = t('slTotal');
+  document.getElementById('slOpen').textContent     = t('slOpen');
+  document.getElementById('slProgress').textContent = t('slProgress');
+  document.getElementById('slResolved').textContent = t('slResolved');
+  document.getElementById('slNotFixable').textContent=t('slNotFixable');
+  document.getElementById('searchInput').placeholder=t('searchPh');
+  document.getElementById('emptyTitle').textContent = t('emptyTitle');
+  document.getElementById('emptySub').textContent   = t('emptySub');
+  // Modal labels
+  setTxt('mlTitle',t('mlTitle')); setTxt('mlLocation',t('mlLocation'));
+  setTxt('mlPriority',t('mlPriority')); setTxt('mlEtaFrom',t('mlEtaFrom'));
+  setTxt('mlEtaTo',t('mlEtaTo')); setTxt('mlComment',t('mlComment'));
+  setTxt('mlDepts',t('mlDepts')); setTxt('mlPhoto',t('mlPhoto'));
+  setTxt('smTitle',t('smTitle')); setTxt('smLabelStatus',t('smLabelStatus'));
+  setTxt('smLabelFrom',t('smLabelFrom')); setTxt('smLabelTo',t('smLabelTo'));
+  setTxt('smLabelNote',t('smLabelNote'));
+}
+function setTxt(id,val){ var el=document.getElementById(id); if(el) el.childNodes[0].nodeValue=val+' '; }
+
+// Init lang
+setLang(currentLang);
+
+// ── Stats ─────────────────────────────────────────────────────────
+function updateStats(issues){
+  var ids=Object.keys(issues);
+  var open=ids.filter(function(id){return issues[id].status==='open';}).length;
+  var prog=ids.filter(function(id){return issues[id].status==='in-progress';}).length;
+  var res=ids.filter(function(id){return issues[id].status==='resolved';}).length;
+  var nf=ids.filter(function(id){return issues[id].status==='not-fixable';}).length;
+  document.getElementById('statTotal').textContent   = ids.length;
+  document.getElementById('statOpen').textContent    = open;
+  document.getElementById('statProgress').textContent= prog;
+  document.getElementById('statResolved').textContent= res;
+  document.getElementById('statNotFixable').textContent= nf;
+}
+
+// ── Render issues ─────────────────────────────────────────────────
+function renderIssues(){
+  var issues = window.__issues||{};
+  var search  = (document.getElementById('searchInput').value||'').toLowerCase();
+  var fStatus = document.getElementById('filterStatus').value;
+  var fDept   = document.getElementById('filterDept').value;
+  var fPriority=document.getElementById('filterPriority').value;
+
+  var ids = Object.keys(issues).filter(function(id){
+    var issue = issues[id];
+    var matchSearch = !search ||
+      (issue.title||'').toLowerCase().includes(search) ||
+      (issue.location||'').toLowerCase().includes(search) ||
+      (issue.comment||'').toLowerCase().includes(search) ||
+      (issue.assignedDepts||[]).join(' ').toLowerCase().includes(search);
+    var matchStatus   = !fStatus   || issue.status===fStatus;
+    var matchDept     = !fDept     || (issue.assignedDepts||[]).includes(fDept);
+    var matchPriority = !fPriority || issue.priority===fPriority;
+    return matchSearch && matchStatus && matchDept && matchPriority;
+  });
+
+  // Sort: open first, then in-progress, then by date desc
+  var order = {'open':0,'in-progress':1,'resolved':2,'not-fixable':3};
+  ids.sort(function(a,b){
+    var oa=order[issues[a].status]||0, ob=order[issues[b].status]||0;
+    if(oa!==ob) return oa-ob;
+    return (issues[b].createdAt||'') > (issues[a].createdAt||'') ? 1 : -1;
+  });
+
+  var grid = document.getElementById('issuesGrid');
+  if(ids.length===0){
+    grid.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">'+t('emptyTitle')+'</div><div class="empty-sub">'+t('emptySub')+'</div></div>';
+    return;
+  }
+  grid.innerHTML = ids.map(function(id){ return buildCard(id, issues[id]); }).join('');
+}
+
+function buildCard(id, issue){
+  var statusLabels = {open:t('open'),'in-progress':t('inProgress'),resolved:t('resolved'),'not-fixable':t('notFixable')};
+  var statusBadge  = {open:'badge-open','in-progress':'badge-in-progress',resolved:'badge-resolved','not-fixable':'badge-not-fixable'};
+  var priorityColor= {high:'priority-high',medium:'priority-medium',low:'priority-low'};
+  var priorityIcon = {high:'🔴',medium:'🟠',low:'🟢'};
+  var depts = (issue.assignedDepts||[]).join(', ');
+  var date  = issue.createdAt ? new Date(issue.createdAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+
+  // Photo section
+  var photoHtml = '';
+  if(issue.photoURL){
+    photoHtml = '<div class="issue-thumb" onclick="openLightbox(\''+escHtml(issue.photoURL)+'\')">'+
+      '<img src="'+escHtml(issue.photoURL)+'" alt="" loading="lazy">'+
+      '<div class="thumb-overlay"></div>'+
+      '<div class="thumb-stamp">'+
+        '<div class="stamp-location">📍 '+escHtml(issue.location||'')+'</div>'+
+        '<div class="stamp-date">'+date+'</div>'+
+      '</div>'+
+      '<button class="download-btn" onclick="event.stopPropagation();downloadPhoto(\''+escHtml(issue.photoURL)+'\',\''+escHtml(issue.title||'issue')+'\')">⬇ '+t('downloadBtn')+'</button>'+
+    '</div>';
+  } else {
+    photoHtml = '<div class="no-photo"><div class="no-photo-icon">📷</div><span>'+t('noPhoto')+'</span></div>';
+  }
+
+  // ETA
+  var etaHtml = '';
+  if(issue.etaFrom || issue.etaTo){
+    etaHtml = '<div class="eta-badge">📅 '+t('etaLabel')+': '+(issue.etaFrom||'?')+' → '+(issue.etaTo||'?')+'</div>';
+  }
+
+  // Comment
+  var commentHtml = issue.comment ? '<div class="issue-comment">'+escHtml(issue.comment)+'</div>' : '';
+
+  // Resolution photo from dept
+  var resHtml = '';
+  if(issue.resolutionPhotoURL){
+    resHtml = '<div class="resolution-photo">'+
+      '<img src="'+escHtml(issue.resolutionPhotoURL)+'" alt="" loading="lazy">'+
+      '<div class="resolution-note">✅ '+t('resolutionPhoto')+(issue.deptNote?' — '+escHtml(issue.deptNote):'')+'</div>'+
+    '</div>';
+  } else if(issue.deptNote){
+    resHtml = '<div class="issue-comment" style="border-color:var(--green);color:var(--green)">💬 '+escHtml(issue.deptNote)+'</div>';
+  }
+
+  return '<div class="issue-card '+issue.status+'" id="card_'+id+'">'+
+    photoHtml+
+    '<div class="issue-body">'+
+      '<div class="issue-header">'+
+        '<div class="issue-title">'+escHtml(issue.title||'')+'</div>'+
+        '<span class="status-badge '+statusBadge[issue.status]+'">'+statusLabels[issue.status]+'</span>'+
+      '</div>'+
+      '<div class="issue-meta">'+
+        '<span class="meta-item"><span class="meta-icon">📍</span>'+escHtml(issue.location||'')+'</span>'+
+        '<span class="meta-item '+priorityColor[issue.priority]+'"><span class="meta-icon">'+priorityIcon[issue.priority]+'</span>'+t(issue.priority||'medium')+'</span>'+
+        (depts?'<span class="meta-item"><span class="meta-icon">🏨</span>'+escHtml(depts)+'</span>':'')+
+      '</div>'+
+      etaHtml+
+      commentHtml+
+      resHtml+
+      '<div class="card-actions">'+
+        '<button class="card-btn btn-edit" onclick="openEditModal(\''+id+'\')">✏️ '+t('editBtn')+'</button>'+
+        '<button class="card-btn btn-status" onclick="openStatusModal(\''+id+'\')">🔄 '+t('statusBtn')+'</button>'+
+        '<button class="card-btn btn-delete" onclick="deleteIssue(\''+id+'\',\''+escHtml(issue.storageRef||'')+'\')">🗑 '+t('deleteBtn')+'</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+// ── Add / Edit modal ──────────────────────────────────────────────
+var selectedPhotoBase64 = null;
+
+function openAddModal(){
+  document.getElementById('modalTitle').textContent = t('modalTitleAdd');
+  document.getElementById('modalSaveBtn').textContent = t('saveBtn');
+  document.getElementById('fTitle').value='';
+  document.getElementById('fLocation').value='';
+  document.getElementById('fPriority').value='medium';
+  document.getElementById('fEtaFrom').value='';
+  document.getElementById('fEtaTo').value='';
+  document.getElementById('fComment').value='';
+  document.getElementById('fEditId').value='';
+  document.getElementById('fExistingPhoto').value='';
+  selectedPhotoBase64=null;
+  resetPhotoUpload();
+  document.querySelectorAll('.dept-check input').forEach(function(cb){ cb.checked=false; cb.closest('.dept-check').classList.remove('checked'); });
+  document.getElementById('issueModal').classList.add('show');
+}
+
+function openEditModal(id){
+  var issue = (window.__issues||{})[id];
+  if(!issue) return;
+  document.getElementById('modalTitle').textContent = t('modalTitleEdit');
+  document.getElementById('modalSaveBtn').textContent = t('updateBtn');
+  document.getElementById('fTitle').value    = issue.title||'';
+  document.getElementById('fLocation').value = issue.location||'';
+  document.getElementById('fPriority').value = issue.priority||'medium';
+  document.getElementById('fEtaFrom').value  = issue.etaFrom||'';
+  document.getElementById('fEtaTo').value    = issue.etaTo||'';
+  document.getElementById('fComment').value  = issue.comment||'';
+  document.getElementById('fEditId').value   = id;
+  document.getElementById('fExistingPhoto').value = issue.photoURL||'';
+  selectedPhotoBase64 = null;
+
+  if(issue.photoURL){
+    document.getElementById('uploadPreview').src = issue.photoURL;
+    document.getElementById('uploadPreview').style.display='block';
+    document.getElementById('uploadIcon').style.display='none';
+    document.getElementById('uploadText').style.display='none';
+    document.getElementById('photoUploadArea').classList.add('has-photo');
+  } else { resetPhotoUpload(); }
+
+  document.querySelectorAll('.dept-check input').forEach(function(cb){
+    var checked = (issue.assignedDepts||[]).includes(cb.value);
+    cb.checked = checked;
+    cb.closest('.dept-check').classList.toggle('checked', checked);
+  });
+  document.querySelectorAll('.dept-check').forEach(function(el){
+    el.addEventListener('change', function(){ el.classList.toggle('checked', el.querySelector('input').checked); });
+  });
+  document.getElementById('issueModal').classList.add('show');
+}
+
+function closeModal(){ document.getElementById('issueModal').classList.remove('show'); }
+
+function handlePhotoSelect(e){
+  var file = e.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    selectedPhotoBase64 = ev.target.result;
+    document.getElementById('uploadPreview').src = selectedPhotoBase64;
+    document.getElementById('uploadPreview').style.display='block';
+    document.getElementById('uploadIcon').style.display='none';
+    document.getElementById('uploadText').style.display='none';
+    document.getElementById('photoUploadArea').classList.add('has-photo');
+  };
+  reader.readAsDataURL(file);
+}
+
+function resetPhotoUpload(){
+  document.getElementById('uploadPreview').style.display='none';
+  document.getElementById('uploadPreview').src='';
+  document.getElementById('uploadIcon').style.display='block';
+  document.getElementById('uploadText').style.display='block';
+  document.getElementById('photoUploadArea').classList.remove('has-photo');
+  document.getElementById('fPhoto').value='';
+}
+
+async function saveIssue(){
+  if(!window.__fbReady){ showToast('Firebase not ready'); return; }
+  var title    = document.getElementById('fTitle').value.trim();
+  var location = document.getElementById('fLocation').value.trim();
+  if(!title){ showToast('Please enter a title'); return; }
+  if(!location){ showToast('Please enter a location'); return; }
+
+  var btn = document.getElementById('modalSaveBtn');
+  btn.textContent='Saving…'; btn.disabled=true;
+
+  var depts = [];
+  document.querySelectorAll('.dept-check input:checked').forEach(function(cb){ depts.push(cb.value); });
+
+  var issueData = {
+    title: title, location: location,
+    priority: document.getElementById('fPriority').value,
+    etaFrom: document.getElementById('fEtaFrom').value,
+    etaTo: document.getElementById('fEtaTo').value,
+    comment: document.getElementById('fComment').value.trim(),
+    assignedDepts: depts,
+    status: 'open',
+    updatedAt: new Date().toISOString(),
+    reportedBy: session.nameEn||session.username,
+  };
+
+  var editId = document.getElementById('fEditId').value;
+  if(editId){
+    var existing = (window.__issues||{})[editId];
+    issueData.status = existing ? existing.status : 'open';
+    issueData.createdAt = existing ? existing.createdAt : new Date().toISOString();
+  } else {
+    issueData.createdAt = new Date().toISOString();
+  }
+
+  // Upload photo
+  if(selectedPhotoBase64){
+    try{
+      var photoId = editId || Date.now().toString();
+      var storRef = window.__sRef(window.__storage,'cpissues/photos/'+photoId);
+      await window.__uploadString(storRef, selectedPhotoBase64, 'data_url');
+      issueData.photoURL  = await window.__getDownloadURL(storRef);
+      issueData.storageRef = 'cpissues/photos/'+photoId;
+    }catch(e){
+      // Store as base64 fallback if storage not configured
+      issueData.photoURL = selectedPhotoBase64;
+    }
+  } else {
+    issueData.photoURL = document.getElementById('fExistingPhoto').value || '';
+  }
+
+  try{
+    if(editId){
+      await window.__update(window.__ref(window.__db,'cpissues/issues/'+editId), issueData);
+    } else {
+      await window.__push(window.__ref(window.__db,'cpissues/issues'), issueData);
+    }
+    showToast(t('toastSaved'));
+    closeModal();
+  }catch(e){
+    showToast('Error saving: '+e.message);
+  }
+  btn.textContent=editId?t('updateBtn'):t('saveBtn'); btn.disabled=false;
+}
+
+// ── Status modal ──────────────────────────────────────────────────
+function openStatusModal(id){
+  var issue = (window.__issues||{})[id];
+  if(!issue) return;
+  document.getElementById('smIssueId').value = id;
+  document.getElementById('smStatus').value  = issue.status||'open';
+  document.getElementById('smEtaFrom').value = issue.etaFrom||'';
+  document.getElementById('smEtaTo').value   = issue.etaTo||'';
+  document.getElementById('smNote').value    = '';
+  document.getElementById('statusModal').classList.add('show');
+}
+function closeStatusModal(){ document.getElementById('statusModal').classList.remove('show'); }
+
+async function saveStatus(){
+  var id     = document.getElementById('smIssueId').value;
+  var status = document.getElementById('smStatus').value;
+  var etaFrom= document.getElementById('smEtaFrom').value;
+  var etaTo  = document.getElementById('smEtaTo').value;
+  var note   = document.getElementById('smNote').value.trim();
+  if(!id) return;
+  await window.__update(window.__ref(window.__db,'cpissues/issues/'+id),{
+    status:status, etaFrom:etaFrom, etaTo:etaTo,
+    mgmtNote: note, updatedAt:new Date().toISOString()
+  });
+  showToast(t('toastUpdated'));
+  closeStatusModal();
+}
+
+// ── Delete ────────────────────────────────────────────────────────
+async function deleteIssue(id, storageRef){
+  if(!confirm(t('confirmDelete'))) return;
+  await window.__remove(window.__ref(window.__db,'cpissues/issues/'+id));
+  if(storageRef){
+    try{ await window.__deleteObject(window.__sRef(window.__storage, storageRef)); }catch(e){}
+  }
+  showToast(t('toastDeleted'));
+}
+
+// ── Photo actions ─────────────────────────────────────────────────
+function openLightbox(url){
+  document.getElementById('lightboxImg').src=url;
+  document.getElementById('lightbox').classList.add('show');
+}
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('show'); }
+
+function downloadPhoto(url, name){
+  var a=document.createElement('a');
+  a.href=url; a.download=(name||'photo')+'.jpg';
+  a.target='_blank'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+// ── Dept check styling ────────────────────────────────────────────
+document.querySelectorAll('.dept-check').forEach(function(el){
+  el.addEventListener('change', function(){ el.classList.toggle('checked', el.querySelector('input').checked); });
+});
+
+// ── Helpers ───────────────────────────────────────────────────────
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); },2800); }
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("./sw.js")
+      .then(function() { console.log("[CP Issues] SW ready"); })
+      .catch(function(e) { console.log("[CP Issues] SW error", e); });
+  });
+}
+</script>
+</body>
+</html>
