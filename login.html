@@ -11,180 +11,72 @@
 <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="CP Issues">
 <meta name="theme-color" content="#8B1A4A">
 <title>Crowne Plaza Amman — Issue Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --cp:       #8B1A4A;
-  --cp-dark:  #6B1238;
-  --cp-light: #B8427A;
-  --cp-pale:  rgba(139,26,74,0.08);
-  --black:    #0f0f0f;
-  --white:    #ffffff;
-  --off:      #fafafa;
-  --surface:  #f4f4f6;
-  --border:   #e8e0e8;
-  --text:     #1a1a1a;
-  --muted:    #7a7a8a;
-  --red:      #dc2626;
-  --radius:   16px;
+  --cp:#8B1A4A; --cp-dark:#6B1238; --cp-light:#B8427A; --cp-pale:rgba(139,26,74,0.08);
+  --white:#ffffff; --off:#fafafa; --surface:#f4f4f6; --border:#e8e0e8;
+  --text:#1a1a1a; --muted:#7a7a8a; --red:#dc2626; --radius:16px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;}
 body{
-  background:var(--off);
-  font-family:'Inter',sans-serif;
-  color:var(--text);
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding:24px 20px;
-  position:relative;
-  overflow:hidden;
+  background:var(--off);font-family:'Inter',sans-serif;color:var(--text);
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:24px 20px;
+  position:relative;overflow:hidden;
 }
-
-/* Elegant background pattern */
 body::before{
-  content:'';
-  position:fixed;inset:0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(139,26,74,0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(139,26,74,0.05) 0%, transparent 50%);
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(139,26,74,0.07) 0%,transparent 60%),
+             radial-gradient(ellipse 50% 40% at 100% 100%,rgba(139,26,74,0.05) 0%,transparent 50%);
   pointer-events:none;
 }
-
 .login-card{
-  background:var(--white);
-  border-radius:24px;
-  box-shadow:0 4px 6px rgba(0,0,0,0.04), 0 20px 60px rgba(139,26,74,0.1);
-  padding:48px 44px;
-  width:100%;
-  max-width:420px;
-  position:relative;
-  z-index:1;
+  background:var(--white);border-radius:24px;
+  box-shadow:0 4px 6px rgba(0,0,0,0.04),0 20px 60px rgba(139,26,74,0.1);
+  padding:48px 44px;width:100%;max-width:420px;position:relative;z-index:1;
 }
-
-/* Logo */
 .logo-wrap{text-align:center;margin-bottom:32px;}
 .cp-logo{width:180px;opacity:0.92;}
-.hotel-name{
-  font-size:12px;font-weight:500;letter-spacing:2.5px;
-  text-transform:uppercase;color:var(--cp);margin-top:10px;
-}
-
-/* Title */
-.login-title{
-  font-family:'Playfair Display',serif;
-  font-size:26px;font-weight:600;
-  color:var(--text);text-align:center;
-  margin-bottom:6px;
-}
-.login-sub{
-  font-size:13px;color:var(--muted);
-  text-align:center;margin-bottom:32px;
-  line-height:1.5;
-}
-
-/* Language toggle */
-.lang-toggle{
-  display:flex;gap:6px;justify-content:center;margin-bottom:28px;
-}
-.lang-btn{
-  padding:6px 16px;border-radius:100px;font-size:12px;font-weight:600;
-  cursor:pointer;transition:all 0.2s;border:1px solid var(--border);
-  background:transparent;color:var(--muted);font-family:'Inter',sans-serif;
-}
+.hotel-name{font-size:12px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:var(--cp);margin-top:10px;}
+.login-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:600;color:var(--text);text-align:center;margin-bottom:6px;}
+.login-sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:32px;line-height:1.5;}
+.lang-toggle{display:flex;gap:6px;justify-content:center;margin-bottom:28px;}
+.lang-btn{padding:6px 16px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Inter',sans-serif;}
 .lang-btn.active{background:var(--cp);color:var(--white);border-color:var(--cp);}
-
-/* Form */
 .field{margin-bottom:16px;}
-.field label{
-  display:block;font-size:11px;font-weight:600;
-  letter-spacing:1px;text-transform:uppercase;
-  color:var(--cp);margin-bottom:7px;
-}
-.field input{
-  width:100%;background:var(--surface);
-  border:1.5px solid var(--border);border-radius:10px;
-  padding:13px 16px;font-size:15px;color:var(--text);
-  font-family:'Inter',sans-serif;outline:none;
-  transition:border-color 0.2s,box-shadow 0.2s;
-}
-.field input:focus{
-  border-color:var(--cp);
-  box-shadow:0 0 0 3px rgba(139,26,74,0.1);
-}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--cp);margin-bottom:7px;}
+.field input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:13px 16px;font-size:15px;color:var(--text);font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.field input:focus{border-color:var(--cp);box-shadow:0 0 0 3px rgba(139,26,74,0.1);}
 .field input::placeholder{color:#bbb;}
-
-.login-btn{
-  width:100%;padding:14px;
-  background:var(--cp);color:var(--white);
-  border:none;border-radius:10px;
-  font-family:'Inter',sans-serif;font-size:15px;font-weight:600;
-  cursor:pointer;transition:all 0.2s;margin-top:4px;
-  letter-spacing:0.3px;
-}
+.login-btn{width:100%;padding:14px;background:var(--cp);color:var(--white);border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;margin-top:4px;letter-spacing:0.3px;}
 .login-btn:hover{background:var(--cp-dark);transform:translateY(-1px);box-shadow:0 8px 24px rgba(139,26,74,0.25);}
-.login-btn:active{transform:translateY(0);}
-
-.login-err{
-  font-size:12px;color:var(--red);
-  text-align:center;margin-top:10px;
-  display:none;padding:10px;
-  background:rgba(220,38,38,0.06);
-  border-radius:8px;
-}
-
-/* Role indicators */
-.role-hint{
-  display:flex;gap:8px;margin-top:20px;justify-content:center;
-}
-.role-chip{
-  font-size:11px;font-weight:500;padding:4px 10px;
-  border-radius:100px;border:1px solid var(--border);color:var(--muted);
-}
-
-/* Credits */
-.credits{
-  text-align:center;margin-top:28px;
-  font-size:11px;color:var(--muted);line-height:1.7;
-}
+.login-err{font-size:12px;color:var(--red);text-align:center;margin-top:10px;display:none;padding:10px;background:rgba(220,38,38,0.06);border-radius:8px;}
+.role-hint{display:flex;gap:8px;margin-top:20px;justify-content:center;}
+.role-chip{font-size:11px;font-weight:500;padding:4px 10px;border-radius:100px;border:1px solid var(--border);color:var(--muted);}
+.credits{text-align:center;margin-top:28px;font-size:11px;color:var(--muted);line-height:1.7;}
 .credits strong{color:var(--cp);font-weight:600;}
-
-@keyframes shake{
-  0%,100%{transform:translateX(0)}
-  20%{transform:translateX(-7px)}40%{transform:translateX(7px)}
-  60%{transform:translateX(-5px)}80%{transform:translateX(5px)}
-}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
 .shake{animation:shake 0.35s ease;}
-
-/* RTL Arabic support */
 body.rtl{direction:rtl;}
 body.rtl .field label{letter-spacing:0;}
 </style>
 </head>
 <body>
-
 <div class="login-card" id="loginCard">
   <div class="logo-wrap">
     <img class="cp-logo" src="cp_logo.png" alt="Crowne Plaza">
     <div class="hotel-name" id="hotelLabel">Crowne Plaza Amman</div>
   </div>
-
   <div class="login-title" id="loginTitle">Issue Tracker</div>
   <div class="login-sub" id="loginSub">Sign in to access your department dashboard</div>
-
   <div class="lang-toggle">
     <button class="lang-btn active" onclick="setLang('en')">English</button>
     <button class="lang-btn" onclick="setLang('ar')">العربية</button>
   </div>
-
   <div class="field">
     <label id="labelUser">Username</label>
     <input type="text" id="usernameInput" placeholder="your.username" autocomplete="username" autocapitalize="none">
@@ -195,164 +87,71 @@ body.rtl .field label{letter-spacing:0;}
   </div>
   <button class="login-btn" id="loginBtn" onclick="doLogin()">Sign In</button>
   <div class="login-err" id="loginErr">Incorrect username or password.</div>
-
   <div class="role-hint">
     <span class="role-chip" id="chip1">👑 Management</span>
     <span class="role-chip" id="chip2">🏨 Departments</span>
   </div>
-
   <div class="credits">
     <strong id="creditName">Developed by Mohammad Al-Jammal</strong><br>
-    <span id="creditSub">IHG Hotels & Resorts · Crowne Plaza Amman</span>
+    <span id="creditSub">IHG Hotels &amp; Resorts · Crowne Plaza Amman</span>
   </div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey:"AIzaSyC0IXfYNIbEjbLiPiY8C2C_JPAd5baTLMo",
-  authDomain:"flowvalet-efd95.firebaseapp.com",
-  databaseURL:"https://flowvalet-efd95-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId:"flowvalet-efd95",
-  storageBucket:"flowvalet-efd95.firebasestorage.app",
-  messagingSenderId:"394962828421",
-  appId:"1:394962828421:web:7bab162c88f3da9ee13dec"
-};
-
-const app = initializeApp(firebaseConfig);
-const db  = getDatabase(app);
-window.__db = db;
-window.__ref = ref;
-window.__get = get;
-
-// Seed default users if not set
-get(ref(db,'cpissues/users')).then(function(snap){
-  if(!snap.exists()){
-    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js").then(function(m){
-      m.set(m.ref(db,'cpissues/users'),{
-        management:{ password:'cp.mgmt2024', role:'management', nameEn:'Management', nameAr:'الإدارة' },
-        engineering:{ password:'eng2024', role:'department', dept:'Engineering', nameEn:'Engineering', nameAr:'الهندسة' },
-        housekeeping:{ password:'hk2024', role:'department', dept:'Housekeeping', nameEn:'Housekeeping', nameAr:'التدبير المنزلي' },
-        frontoffice:{ password:'fo2024', role:'department', dept:'Front Office', nameEn:'Front Office', nameAr:'الاستقبال' },
-        fnb:{ password:'fnb2024', role:'department', dept:'F&B', nameEn:'Food & Beverage', nameAr:'الأغذية والمشروبات' },
-        security:{ password:'sec2024', role:'department', dept:'Security', nameEn:'Security', nameAr:'الأمن' },
-      });
-    });
-  }
-});
-</script>
-
+<script src="config.js"></script>
 <script>
 var currentLang = 'en';
-
 var strings = {
-  en:{
-    title:'Issue Tracker', sub:'Sign in to access your department dashboard',
-    labelUser:'Username', labelPass:'Password', btn:'Sign In',
-    err:'Incorrect username or password.',
-    hotel:'Crowne Plaza Amman', chip1:'👑 Management', chip2:'🏨 Departments',
-    credit:'Developed by Mohammad Al-Jammal', creditSub:'IHG Hotels & Resorts · Crowne Plaza Amman'
-  },
-  ar:{
-    title:'نظام تتبع المشكلات', sub:'تسجيل الدخول للوصول إلى لوحة القسم',
-    labelUser:'اسم المستخدم', labelPass:'كلمة المرور', btn:'تسجيل الدخول',
-    err:'اسم المستخدم أو كلمة المرور غير صحيحة.',
-    hotel:'كراون بلازا عمّان', chip1:'👑 الإدارة', chip2:'🏨 الأقسام',
-    credit:'تطوير: محمد الجمّال', creditSub:'فنادق ومنتجعات IHG · كراون بلازا عمّان'
-  }
+  en:{ title:'Issue Tracker', sub:'Sign in to access your department dashboard', labelUser:'Username', labelPass:'Password', btn:'Sign In', err:'Incorrect username or password.', hotel:'Crowne Plaza Amman', chip1:'👑 Management', chip2:'🏨 Departments', credit:'Developed by Mohammad Al-Jammal', creditSub:'IHG Hotels & Resorts · Crowne Plaza Amman' },
+  ar:{ title:'نظام تتبع المشكلات', sub:'تسجيل الدخول للوصول إلى لوحة القسم', labelUser:'اسم المستخدم', labelPass:'كلمة المرور', btn:'تسجيل الدخول', err:'اسم المستخدم أو كلمة المرور غير صحيحة.', hotel:'كراون بلازا عمّان', chip1:'👑 الإدارة', chip2:'🏨 الأقسام', credit:'تطوير: محمد الجمّال', creditSub:'فنادق ومنتجعات IHG · كراون بلازا عمّان' }
 };
-
 function setLang(lang){
-  currentLang = lang;
-  var s = strings[lang];
-  document.getElementById('loginTitle').textContent  = s.title;
-  document.getElementById('loginSub').textContent    = s.sub;
-  document.getElementById('labelUser').textContent   = s.labelUser;
-  document.getElementById('labelPass').textContent   = s.labelPass;
-  document.getElementById('loginBtn').textContent    = s.btn;
-  document.getElementById('loginErr').textContent    = s.err;
-  document.getElementById('hotelLabel').textContent  = s.hotel;
-  document.getElementById('chip1').textContent       = s.chip1;
-  document.getElementById('chip2').textContent       = s.chip2;
-  document.getElementById('creditName').textContent  = s.credit;
-  document.getElementById('creditSub').textContent   = s.creditSub;
+  currentLang=lang;
+  var s=strings[lang];
+  document.getElementById('loginTitle').textContent=s.title;
+  document.getElementById('loginSub').textContent=s.sub;
+  document.getElementById('labelUser').textContent=s.labelUser;
+  document.getElementById('labelPass').textContent=s.labelPass;
+  document.getElementById('loginBtn').textContent=s.btn;
+  document.getElementById('loginErr').textContent=s.err;
+  document.getElementById('hotelLabel').textContent=s.hotel;
+  document.getElementById('chip1').textContent=s.chip1;
+  document.getElementById('chip2').textContent=s.chip2;
+  document.getElementById('creditName').textContent=s.credit;
+  document.getElementById('creditSub').textContent=s.creditSub;
   document.querySelectorAll('.lang-btn').forEach(function(b){
-    b.classList.toggle('active', b.textContent.trim()===(lang==='en'?'English':'العربية'));
+    b.classList.toggle('active',b.textContent.trim()===(lang==='en'?'English':'العربية'));
   });
-  document.body.classList.toggle('rtl', lang==='ar');
-  document.getElementById('htmlRoot').setAttribute('dir', lang==='ar'?'rtl':'ltr');
-  sessionStorage.setItem('cpLang', lang);
+  document.body.classList.toggle('rtl',lang==='ar');
+  document.getElementById('htmlRoot').setAttribute('dir',lang==='ar'?'rtl':'ltr');
+  sessionStorage.setItem('cpLang',lang);
 }
+var savedLang=sessionStorage.getItem('cpLang'); if(savedLang) setLang(savedLang);
 
-// Restore lang
-var savedLang = sessionStorage.getItem('cpLang');
-if(savedLang) setLang(savedLang);
-
-function doLogin(){
-  var username = document.getElementById('usernameInput').value.trim().toLowerCase();
-  var password = document.getElementById('passwordInput').value;
-  var err = document.getElementById('loginErr');
-  err.style.display='none';
-
+async function doLogin(){
+  var username=document.getElementById('usernameInput').value.trim().toLowerCase();
+  var password=document.getElementById('passwordInput').value;
+  document.getElementById('loginErr').style.display='none';
   if(!username||!password){ shake(); return; }
 
-  if(!window.__get){ setTimeout(doLogin,500); return; }
-
-  window.__get(window.__ref(window.__db,'cpissues/users/'+username)).then(function(snap){
-    if(!snap.exists()){ showErr(); return; }
-    var user = snap.val();
-    if(user.password !== password){ showErr(); return; }
-
-    // Store session
-    sessionStorage.setItem('cpUser', JSON.stringify({
-      username: username,
-      role: user.role,
-      dept: user.dept||'',
-      nameEn: user.nameEn,
-      nameAr: user.nameAr
-    }));
-    sessionStorage.setItem('cpLang', currentLang);
-
-    // Route
-    if(user.role === 'management'){
-      window.location.href = 'management.html';
-    } else {
-      window.location.href = 'department.html';
-    }
-  }).catch(function(){ showErr(); });
+  var cfg=window.CP_CONFIG;
+  try{
+    var res=await fetch(cfg.SUPABASE_URL+'/rest/v1/users?username=eq.'+encodeURIComponent(username),{
+      headers:{ 'apikey':cfg.SUPABASE_KEY, 'Authorization':'Bearer '+cfg.SUPABASE_KEY }
+    });
+    var data=await res.json();
+    if(!data||!data.length){ showErr(); return; }
+    var user=data[0];
+    if(user.password!==password){ showErr(); return; }
+    sessionStorage.setItem('cpUser',JSON.stringify({ username:username, role:user.role, dept:user.dept||'', nameEn:user.name_en, nameAr:user.name_ar }));
+    sessionStorage.setItem('cpLang',currentLang);
+    window.location.href = user.role==='management' ? 'management.html' : 'department.html';
+  }catch(e){ showErr(); }
 }
-
-function showErr(){
-  var err = document.getElementById('loginErr');
-  err.textContent = strings[currentLang].err;
-  err.style.display='block';
-  shake();
-}
-function shake(){
-  var card = document.getElementById('loginCard');
-  card.classList.remove('shake');
-  void card.offsetWidth;
-  card.classList.add('shake');
-  setTimeout(function(){ card.classList.remove('shake'); },350);
-}
-
-document.getElementById('passwordInput').addEventListener('keydown',function(e){
-  if(e.key==='Enter') doLogin();
-});
-document.getElementById('usernameInput').addEventListener('keydown',function(e){
-  if(e.key==='Enter') document.getElementById('passwordInput').focus();
-});
+function showErr(){ var e=document.getElementById('loginErr'); e.textContent=strings[currentLang].err; e.style.display='block'; shake(); }
+function shake(){ var c=document.getElementById('loginCard'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); setTimeout(function(){ c.classList.remove('shake'); },350); }
+document.getElementById('passwordInput').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+document.getElementById('usernameInput').addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('passwordInput').focus(); });
 </script>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function() {
-    navigator.serviceWorker.register("./sw.js")
-      .then(function() { console.log("[CP Issues] SW ready"); })
-      .catch(function(e) { console.log("[CP Issues] SW error", e); });
-  });
-}
-</script>
+<script>if("serviceWorker"in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js");});}</script>
 </body>
 </html>
