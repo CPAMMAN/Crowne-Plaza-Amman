@@ -548,7 +548,7 @@ body.rtl .download-btn{right:auto;left:10px;}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, push, update, remove, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-import { getStorage, ref as sRef, uploadString, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+// Firebase Storage removed — using Cloudflare R2
 
 const firebaseConfig = {
   apiKey:"AIzaSyC0IXfYNIbEjbLiPiY8C2C_JPAd5baTLMo",
@@ -560,20 +560,14 @@ const firebaseConfig = {
   appId:"1:394962828421:web:7bab162c88f3da9ee13dec"
 };
 
-const app  = initializeApp(firebaseConfig);
-const db   = getDatabase(app);
-const storage = getStorage(app);
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
 
-window.__db = db;
-window.__push = push;
+window.__db     = db;
+window.__push   = push;
 window.__update = update;
 window.__remove = remove;
-window.__set = set;
-window.__sRef = sRef;
-window.__uploadString = uploadString;
-window.__getDownloadURL = getDownloadURL;
-window.__deleteObject = deleteObject;
-window.__storage = storage;
+window.__set    = set;
 window.__fbReady = true;
 
 // Listen to all issues
@@ -587,6 +581,35 @@ onValue(ref(db,'cpissues/issues'), function(snap){
 </script>
 
 <script>
+// ══════════════════════════════════════════════════════════════════
+// CLOUDFLARE R2 CONFIG
+// Replace these two values with yours after setting up R2 + Worker
+// ══════════════════════════════════════════════════════════════════
+var R2_WORKER_URL  = 'https://YOUR_WORKER.YOUR_SUBDOMAIN.workers.dev';
+var R2_PUBLIC_URL  = 'https://YOUR_PUBLIC_BUCKET_URL.r2.dev';
+// ══════════════════════════════════════════════════════════════════
+
+async function uploadToR2(base64DataUrl, filename){
+  // Convert base64 data URL to Blob
+  var arr    = base64DataUrl.split(',');
+  var mime   = arr[0].match(/:(.*?);/)[1];
+  var bstr   = atob(arr[1]);
+  var n      = bstr.length;
+  var u8arr  = new Uint8Array(n);
+  while(n--){ u8arr[n] = bstr.charCodeAt(n); }
+  var blob   = new Blob([u8arr], { type: mime });
+
+  var form = new FormData();
+  form.append('file', blob, filename);
+  form.append('filename', filename);
+
+  var res = await fetch(R2_WORKER_URL, { method: 'POST', body: form });
+  if(!res.ok) throw new Error('R2 upload failed: ' + res.status);
+  var data = await res.json();
+  if(data.error) throw new Error(data.error);
+  return data.url;
+}
+
 // ── Auth guard ────────────────────────────────────────────────────
 var session = JSON.parse(sessionStorage.getItem('cpUser')||'null');
 if(!session || session.role !== 'management'){
@@ -808,7 +831,7 @@ function buildCard(id, issue){
       '<div class="card-actions">'+
         '<button class="card-btn btn-edit" onclick="openEditModal(\''+id+'\')">✏️ '+t('editBtn')+'</button>'+
         '<button class="card-btn btn-status" onclick="openStatusModal(\''+id+'\')">🔄 '+t('statusBtn')+'</button>'+
-        '<button class="card-btn btn-delete" onclick="deleteIssue(\''+id+'\',\''+escHtml(issue.storageRef||'')+'\')">🗑 '+t('deleteBtn')+'</button>'+
+        '<button class="card-btn btn-delete" onclick="deleteIssue(\''+id+'\',\''+escHtml(issue.r2Key||'')+'\')">🗑 '+t('deleteBtn')+'</button>'+
       '</div>'+
     '</div>'+
   '</div>';
@@ -928,17 +951,19 @@ async function saveIssue(){
     issueData.createdAt = new Date().toISOString();
   }
 
-  // Upload photo
+  // Upload photo → Cloudflare R2
   if(selectedPhotoBase64){
     try{
-      var photoId = editId || Date.now().toString();
-      var storRef = window.__sRef(window.__storage,'cpissues/photos/'+photoId);
-      await window.__uploadString(storRef, selectedPhotoBase64, 'data_url');
-      issueData.photoURL  = await window.__getDownloadURL(storRef);
-      issueData.storageRef = 'cpissues/photos/'+photoId;
+      var photoId = (editId || Date.now().toString()) + '_' + Math.random().toString(36).substr(2,6);
+      var filename = 'issues/' + photoId + '.jpg';
+      var uploadedUrl = await uploadToR2(selectedPhotoBase64, filename);
+      issueData.photoURL   = uploadedUrl;
+      issueData.r2Key      = filename;
+      issueData.storageRef = '';  // no Firebase Storage
     }catch(e){
-      // Store as base64 fallback if storage not configured
-      issueData.photoURL = selectedPhotoBase64;
+      showToast('Photo upload failed: ' + e.message);
+      btn.textContent=editId?t('updateBtn'):t('saveBtn'); btn.disabled=false;
+      return;
     }
   } else {
     issueData.photoURL = document.getElementById('fExistingPhoto').value || '';
@@ -987,11 +1012,14 @@ async function saveStatus(){
 }
 
 // ── Delete ────────────────────────────────────────────────────────
-async function deleteIssue(id, storageRef){
+async function deleteIssue(id, r2Key){
   if(!confirm(t('confirmDelete'))) return;
   await window.__remove(window.__ref(window.__db,'cpissues/issues/'+id));
-  if(storageRef){
-    try{ await window.__deleteObject(window.__sRef(window.__storage, storageRef)); }catch(e){}
+  // Delete from R2 via worker if key exists
+  if(r2Key){
+    try{
+      await fetch(R2_WORKER_URL + '?action=delete&key=' + encodeURIComponent(r2Key), { method:'DELETE' });
+    }catch(e){ /* non-critical */ }
   }
   showToast(t('toastDeleted'));
 }

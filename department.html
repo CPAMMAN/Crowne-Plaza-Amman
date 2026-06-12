@@ -345,7 +345,7 @@ body.rtl .issue-comment{border-left:none;border-right:3px solid var(--border);}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+// Firebase Storage removed — using Cloudflare R2
 
 const firebaseConfig = {
   apiKey:"AIzaSyC0IXfYNIbEjbLiPiY8C2C_JPAd5baTLMo",
@@ -359,14 +359,9 @@ const firebaseConfig = {
 
 const app  = initializeApp(firebaseConfig);
 const db   = getDatabase(app);
-const storage = getStorage(app);
 
-window.__db = db;
-window.__update = update;
-window.__sRef = sRef;
-window.__uploadString = uploadString;
-window.__getDownloadURL = getDownloadURL;
-window.__storage = storage;
+window.__db      = db;
+window.__update  = update;
 window.__fbReady = true;
 
 onValue(ref(db,'cpissues/issues'), function(snap){
@@ -379,6 +374,33 @@ onValue(ref(db,'cpissues/issues'), function(snap){
 </script>
 
 <script>
+// ══════════════════════════════════════════════════════════════════
+// CLOUDFLARE R2 CONFIG  — same values as management.html
+// ══════════════════════════════════════════════════════════════════
+var R2_WORKER_URL = 'https://YOUR_WORKER.YOUR_SUBDOMAIN.workers.dev';
+var R2_PUBLIC_URL = 'https://YOUR_PUBLIC_BUCKET_URL.r2.dev';
+// ══════════════════════════════════════════════════════════════════
+
+async function uploadToR2(base64DataUrl, filename){
+  var arr   = base64DataUrl.split(',');
+  var mime  = arr[0].match(/:(.*?);/)[1];
+  var bstr  = atob(arr[1]);
+  var n     = bstr.length;
+  var u8arr = new Uint8Array(n);
+  while(n--){ u8arr[n] = bstr.charCodeAt(n); }
+  var blob  = new Blob([u8arr], { type: mime });
+
+  var form = new FormData();
+  form.append('file', blob, filename);
+  form.append('filename', filename);
+
+  var res = await fetch(R2_WORKER_URL, { method: 'POST', body: form });
+  if(!res.ok) throw new Error('R2 upload failed: ' + res.status);
+  var data = await res.json();
+  if(data.error) throw new Error(data.error);
+  return data.url;
+}
+
 // Auth guard
 var session = JSON.parse(sessionStorage.getItem('cpUser')||'null');
 if(!session || session.role !== 'department'){
@@ -654,11 +676,13 @@ async function submitUpdate(){
 
   if(resolutionPhotoBase64){
     try{
-      var storRef=window.__sRef(window.__storage,'cpissues/resolution/'+id);
-      await window.__uploadString(storRef,resolutionPhotoBase64,'data_url');
-      updateData.resolutionPhotoURL=await window.__getDownloadURL(storRef);
+      var resKey = 'resolution/' + id + '_' + Date.now() + '.jpg';
+      updateData.resolutionPhotoURL = await uploadToR2(resolutionPhotoBase64, resKey);
+      updateData.resolutionR2Key    = resKey;
     }catch(e){
-      updateData.resolutionPhotoURL=resolutionPhotoBase64;
+      showToast('Photo upload failed: ' + e.message);
+      btn.textContent=t('umSaveBtn'); btn.disabled=false;
+      return;
     }
   }
 
