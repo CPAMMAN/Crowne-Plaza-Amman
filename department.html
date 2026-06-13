@@ -161,6 +161,11 @@ body.rtl .cmt{border-left:none;border-right:3px solid var(--border);}
 .prev-item{position:relative;width:72px;height:72px;border-radius:8px;overflow:hidden;flex-shrink:0;}
 .prev-item img{width:100%;height:100%;object-fit:cover;}
 .prev-del{position:absolute;top:3px;right:3px;background:rgba(220,38,38,0.85);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.puz-btns-row{display:flex;gap:0;}
+.puz-half{flex:1;border-right:1px solid var(--border);flex-direction:column;padding:14px 8px;}
+.puz-half:last-child{border-right:none;}
+.puz-half .puz-icon{font-size:22px;}
+.puz-half strong{font-size:12px;}
 .msave{width:100%;padding:13px;background:var(--cp);color:#fff;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s;margin-top:8px;}
 .msave:hover{background:var(--cp-dark);}
 .msave:disabled{opacity:.6;cursor:not-allowed;}
@@ -292,10 +297,17 @@ body.rtl .cmt{border-left:none;border-right:3px solid var(--border);}
     <div class="mf">
       <label id="ml-photos">Photos <span class="opt">(optional)</span></label>
       <div class="photo-upload-zone" id="puz">
-        <div class="puz-btn">
-          <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhotos(event)">
-          <div class="puz-icon">📷</div>
-          <div class="puz-text"><strong id="puz-strong">Tap to add photos</strong><span id="puz-hint">Camera or gallery</span></div>
+        <div class="puz-btns-row">
+          <div class="puz-btn puz-half">
+            <input type="file" id="photoInputCamera" accept="image/*" capture="environment" multiple onchange="handlePhotos(event)">
+            <div class="puz-icon">📸</div>
+            <div class="puz-text"><strong>Camera</strong></div>
+          </div>
+          <div class="puz-btn puz-half">
+            <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhotos(event)">
+            <div class="puz-icon">🖼️</div>
+            <div class="puz-text"><strong>Gallery</strong></div>
+          </div>
         </div>
         <div class="preview-strip" id="previewStrip"></div>
       </div>
@@ -328,10 +340,17 @@ body.rtl .cmt{border-left:none;border-right:3px solid var(--border);}
     <div class="mf">
       <label id="um-photos">Resolution Photos <span class="opt">(optional)</span></label>
       <div class="photo-upload-zone" id="rpuz">
-        <div class="puz-btn">
-          <input type="file" id="resPhotoInput" accept="image/*" multiple onchange="handleResPhotos(event)">
-          <div class="puz-icon">📷</div>
-          <div class="puz-text"><strong id="rpuz-strong">Add resolution photos</strong><span id="rpuz-hint">Camera or gallery</span></div>
+        <div class="puz-btns-row">
+          <div class="puz-btn puz-half">
+            <input type="file" id="resPhotoInputCamera" accept="image/*" capture="environment" multiple onchange="handleResPhotos(event)">
+            <div class="puz-icon">📸</div>
+            <div class="puz-text"><strong>Camera</strong></div>
+          </div>
+          <div class="puz-btn puz-half">
+            <input type="file" id="resPhotoInput" accept="image/*" multiple onchange="handleResPhotos(event)">
+            <div class="puz-icon">🖼️</div>
+            <div class="puz-text"><strong>Gallery</strong></div>
+          </div>
         </div>
         <div class="preview-strip" id="resPreviewStrip"></div>
       </div>
@@ -576,7 +595,7 @@ function addPreview(src,url,isExisting){
   del.onclick=function(){ div.remove(); if(!isExisting){ var i=selectedPhotos.indexOf(src); if(i>-1) selectedPhotos.splice(i,1); } if(!document.getElementById('previewStrip').children.length) document.getElementById('puz').classList.remove('has-photos'); };
   div.appendChild(img); div.appendChild(del); strip.appendChild(div);
 }
-function clearPreviews(){ document.getElementById('previewStrip').innerHTML=''; document.getElementById('puz').classList.remove('has-photos'); if(document.getElementById('photoInput')) document.getElementById('photoInput').value=''; }
+function clearPreviews(){ document.getElementById('previewStrip').innerHTML=''; document.getElementById('puz').classList.remove('has-photos'); ['photoInput','photoInputCamera'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';}); }
 
 async function saveIssue(){
   var title=document.getElementById('fTitle').value.trim();
@@ -624,7 +643,7 @@ function addResPreview(src){
   del.onclick=function(){ div.remove(); var i=selectedResPhotos.indexOf(src); if(i>-1) selectedResPhotos.splice(i,1); if(!document.getElementById('resPreviewStrip').children.length) document.getElementById('rpuz').classList.remove('has-photos'); };
   div.appendChild(img); div.appendChild(del); strip.appendChild(div);
 }
-function clearResPhotos(){ document.getElementById('resPreviewStrip').innerHTML=''; document.getElementById('rpuz').classList.remove('has-photos'); if(document.getElementById('resPhotoInput')) document.getElementById('resPhotoInput').value=''; }
+function clearResPhotos(){ document.getElementById('resPreviewStrip').innerHTML=''; document.getElementById('rpuz').classList.remove('has-photos'); ['resPhotoInput','resPhotoInputCamera'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';}); }
 
 async function submitUpdate(){
   var id=document.getElementById('umId').value; if(!id) return;
